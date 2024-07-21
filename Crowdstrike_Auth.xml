@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UIpp Title="CS Fix" Color="#FFB300" DialogIcons="False" SidebarTextColor="#000000" AlwaysOnTop="False" >
+   <!--Actions section-->
+	<Actions>
+
+		<!--Crowdstrike Fix-->
+		<Action Type="ExternalCall" Title="Executing Crowdstrike Repair">PowerShell.exe -ExecutionPolicy ByPass -File "CSFix.ps1"</Action>
+		<Action Type="RegRead" Hive="HKLM" Key="SOFTWARE\IMAGE" Value="CSFixComplete" Variable="CSFixComplete" />
+		<Action Type="RegRead" Hive="HKLM" Key="SOFTWARE\IMAGE" Value="RecoveryKeyID" Variable="RecoveryKeyID" />
+		<Action Type="Input" Name="myInput" Size="Tall" Title="Crowdstrike Incident" ShowBack="true" ShowCancel="True" Condition='"%CSFixComplete%" = "False"'>
+			<InputText Prompt="Bitlocker Recovery Key" Variable="BitlockerKey" Question="Bitlocker Key" Required="False" HScroll="True"/>
+			<InputInfo><![CDATA[Recovery Key ID:]]></InputInfo>
+			<InputInfo><![CDATA[%RecoveryKeyID%]]></InputInfo>
+		</Action>
+		<Action Type="ExternalCall" Title="Executing Crowdstrike Repair">PowerShell.exe -ExecutionPolicy ByPass -File "CSFix.ps1" -Key '%BitlockerKey%'</Action>
+		<Action Type="Info" Name="myInfo" Size="Tall" Title="Crowdstrike Fix Failed" ShowCancel="True" Condition='"%CSFixComplete%" = "False"'>Crowdstrike fix was not completed. Please perform manual steps to remediate Crowdstrike BSOD issue by hitting F8 to open a command prompt window.</Action>
+		<Action Type="Info" Name="myInfo" Size="Tall" Title="Crowdstrike Fix Complete" Condition='"%CSFixComplete%" = "True"'>Crowdstrike fix is complete. Reboot system.</Action>
+		<Action Type="Info" Name="myInfo" Size="Tall" Title="Crowdstrike Fix Complete" Timeout="15" Condition='"%CSFixComplete%" = "True"'>Crowdstrike fix is complete. Reboot system.</Action>
+	</Actions>
+</UIpp>
