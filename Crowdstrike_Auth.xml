@@ -7,10 +7,11 @@
 		<Action Type="ExternalCall" Title="Executing Crowdstrike Repair">PowerShell.exe -ExecutionPolicy ByPass -File "CSFix.ps1"</Action>
 		<Action Type="RegRead" Hive="HKLM" Key="SOFTWARE\IMAGE" Value="CSFixComplete" Variable="CSFixComplete" />
 		<Action Type="RegRead" Hive="HKLM" Key="SOFTWARE\IMAGE" Value="RecoveryKeyID" Variable="RecoveryKeyID" />
-		<Action Type="Input" Name="myInput" Size="Tall" Title="Crowdstrike Incident" ShowBack="true" ShowCancel="True" Condition='"%CSFixComplete%" = "False"'>
+		<Action Type="Input" Name="myInput" Size="Regular" Title="Crowdstrike Incident" ShowBack="true" ShowCancel="True" Condition='"%CSFixComplete%" = "False"'>
+			<InputInfo NumberofLines="2">Recovery key not found! Please resolve manually by retreiving the recovery keyfrom AD/Intune.</InputInfo>
 			<InputText Prompt="Bitlocker Recovery Key" Variable="BitlockerKey" Question="Bitlocker Key" Required="False" HScroll="True"/>
-			<InputInfo><![CDATA[Recovery Key ID:]]></InputInfo>
-			<InputInfo><![CDATA[%RecoveryKeyID%]]></InputInfo>
+			<InputInfo>Recovery Key ID:</InputInfo>
+			<InputInfo>%RecoveryKeyID%</InputInfo>
 		</Action>
 		<Action Type="ExternalCall" Title="Executing Crowdstrike Repair">PowerShell.exe -ExecutionPolicy ByPass -File "CSFix.ps1" -Key '%BitlockerKey%'</Action>
 		<Action Type="Info" Name="myInfo" Size="Tall" Title="Crowdstrike Fix Failed" ShowCancel="True" Condition='"%CSFixComplete%" = "False"'>Crowdstrike fix was not completed. Please perform manual steps to remediate Crowdstrike BSOD issue by hitting F8 to open a command prompt window.</Action>
