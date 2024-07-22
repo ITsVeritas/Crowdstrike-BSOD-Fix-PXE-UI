@@ -25,13 +25,14 @@ try {
             if ($LockStatus -eq 'Locked') {
                 if ([String]::IsNullOrWhiteSpace($Key)) {
                     #No Key provided, use CSV
-                    # Import CSV file
-                    $recoveryKeys = Import-Csv ".\Keys.csv"
 
-                    # Get recovery key ID 
+                    # Get recovery key ID
                     $getbitlockerinfo = Invoke-Expression "manage-bde -protectors -get $driveLetter -t RecoveryPassword"
                     $recoveryKeyID = ($getbitlockerinfo | Select-String -Pattern 'ID:\s+{(.+?)}').Matches.Groups[1].Value
 
+                    # Import CSV file
+                    $recoveryKeys = Import-Csv ".\Keys.csv"
+                    
                     # Search for the recovery key based on recovery key ID
                     $matchingRecoveryKey = $recoveryKeys | Where-Object { $_.ID -eq $recoverykeyid }
 
@@ -74,9 +75,9 @@ try {
             }
         }
     }
-    New-ItemProperty -Path "HKLM:\SOFTWARE\IMAGE" -Name "CSFixComplete" -Value $fileDeleted -PropertyType "String" -Force
-    New-ItemProperty -Path "HKLM:\SOFTWARE\IMAGE" -Name "RecoveryKeyID" -Value $recoveryKeyID -PropertyType "String" -Force
 }
 finally {
     Remove-Item 'Keys.csv' -Force
+    New-ItemProperty -Path "HKLM:\SOFTWARE\IMAGE" -Name "CSFixComplete" -Value $fileDeleted -PropertyType "String" -Force
+    New-ItemProperty -Path "HKLM:\SOFTWARE\IMAGE" -Name "RecoveryKeyID" -Value $recoveryKeyID -PropertyType "String" -Force
 }
